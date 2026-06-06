@@ -1,0 +1,21 @@
+# uv / venv artifacts
+.venv
+.venv-*
+uv.lock
+__pycache__/
+*.py[cod]
+*$py.class
+
+# TensorRT build artifacts (engines + timing cache)
+timing_cache.trt
+*.engine
+output/
+temp/
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

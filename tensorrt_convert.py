@@ -23,6 +23,9 @@ else:
         {".engine"},
     )
 
+# Helpful startup diagnostic (especially after uv / embed python updates)
+print(f"[ComfyUI_TensorRT] tensorrt version: {trt.__version__}")
+
 class TQDMProgressMonitor(trt.IProgressMonitor):
     def __init__(self):
         trt.IProgressMonitor.__init__(self)
@@ -297,9 +300,11 @@ class TRT_MODEL_CONVERSION_BASE:
         logger = trt.Logger(trt.Logger.INFO)
         builder = trt.Builder(logger)
 
-        network = builder.create_network(
-            1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
-        )
+        # TRT 11+: networks are strongly typed by default. EXPLICIT_BATCH flag
+        # and BuilderFlag.FP16/BF16 have been removed. We export the ONNX graph
+        # already in the target dtype (fp16/bf16), so the parser produces the
+        # correct strongly-typed network without any builder flags.
+        network = builder.create_network()
         parser = trt.OnnxParser(network, logger)
         success = parser.parse_from_file(output_onnx)
         for idx in range(parser.num_errors):
@@ -326,11 +331,6 @@ class TRT_MODEL_CONVERSION_BASE:
             prefix_encode += "{}#{}#{}#{};".format(
                 input_names[k], encode(min_shape), encode(opt_shape), encode(max_shape)
             )
-
-        if dtype == torch.float16:
-            config.set_flag(trt.BuilderFlag.FP16)
-        if dtype == torch.bfloat16:
-            config.set_flag(trt.BuilderFlag.BF16)
 
         config.add_optimization_profile(profile)
 
