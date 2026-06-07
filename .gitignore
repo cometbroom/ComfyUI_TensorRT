@@ -19,3 +19,10 @@ temp/
 *~
 .DS_Store
 Thumbs.db
+
+# Local-only development files (not committed)
+setup_uv_env.ps1
+
+# V3 migration reference docs (kept locally, not part of the repo)
+NodeV3_Instructions.md
+NodeV3Migration_FromComfy.md
