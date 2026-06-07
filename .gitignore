@@ -1,0 +1,28 @@
+# uv / venv artifacts
+.venv
+.venv-*
+uv.lock
+__pycache__/
+*.py[cod]
+*$py.class
+
+# TensorRT build artifacts (engines + timing cache)
+timing_cache.trt
+*.engine
+output/
+temp/
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Local-only development files (not committed)
+setup_uv_env.ps1
+
+# V3 migration reference docs (kept locally, not part of the repo)
+NodeV3_Instructions.md
+NodeV3Migration_FromComfy.md
