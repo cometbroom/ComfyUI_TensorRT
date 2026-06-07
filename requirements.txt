@@ -1,2 +1,5 @@
-tensorrt==11.0.0.114
+# tensorrt is handled specially by setup_uv_env.ps1:
+# - If $env:TENSORRT_ROOT is set and contains python/tensorrt-*.whl, that local SDK wheel is used.
+# - Otherwise it falls back to the line below (PyPI).
+# tensorrt==11.0.0.114
 onnx

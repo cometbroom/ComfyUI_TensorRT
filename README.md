@@ -40,6 +40,58 @@ cd ComfyUI_TensorRT
 pip install -r requirements.txt
 ```
 
+### Using uv (recommended for the portable / embedded ComfyUI setup)
+
+This fork is maintained for the modern stack:
+
+- PyTorch 2.11.0+cu130
+- TensorRT 11.0.0.114 (CUDA 13.2) — **preferred: installed from your local NVIDIA SDK zip, not PyPI**
+- Python 3.13 embedded (the one that ships with recent ComfyUI Windows portable builds)
+
+**Important (PowerShell + conda):** Many users have conda configured to auto-activate the `base` environment in every new PowerShell session. This conflicts with the embedded Python and uv. The helper script below (and all examples) force deactivation first.
+
+**TensorRT installation (strongly recommended):**  
+Extract the official TensorRT zip from NVIDIA, then set the environment variable:
+
+```powershell
+$env:TENSORRT_ROOT = 'G:\DEV\TensorRT-11.0.0.114'   # adjust to your path
+```
+
+Make sure:
+- `$env:TENSORRT_ROOT\bin` is on your `PATH`
+- `$env:TENSORRT_ROOT\lib` is on `LIB`
+- `$env:TENSORRT_ROOT\include` is on `INCLUDE`
+
+The `setup_uv_env.ps1` script will automatically detect `$env:TENSORRT_ROOT` and install the official wheel from the `python\` subfolder instead of pulling from PyPI. This gives you the exact build that matches your SDK.
+
+From inside the `ComfyUI_TensorRT` directory run:
+
+```powershell
+# Creates an isolated test venv that re-uses your existing torch etc.
+# (prefers local TensorRT wheel from TENSORRT_ROOT)
+.\setup_uv_env.ps1
+
+# Or install directly into the real embeded python (so ComfyUI sees it immediately)
+.\setup_uv_env.ps1 -Direct
+```
+
+After the first form you can activate the test venv and verify:
+
+```powershell
+.\.venv-trt\Scripts\Activate.ps1
+python -m test_smoke
+```
+
+See `setup_uv_env.ps1` for the exact commands it runs and more options.
+
+Classic `pip` still works if you prefer it and have already handled conda deactivation yourself (you would then manually `pip install` the wheel from your TensorRT `python\` folder).
+
+### Tested against
+- ComfyUI (current main as of 2026)
+- torch 2.11.0+cu130 (CUDA 13.0 wheel)
+- TensorRT 11.0.0.114 installed from local NVIDIA SDK wheel (G:\DEV\TensorRT-11.0.0.114)
+- Windows + NVIDIA RTX (Ada / Blackwell class GPUs)
+
 ## Description
 
 NVIDIA TensorRT allows you to optimize how you run an AI model for your
